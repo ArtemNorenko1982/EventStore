@@ -1,12 +1,12 @@
 ﻿using System;
-using BookService.WebApi.Helpers;
-using EventStore.Api.Helpers;
 using EventStore.DataContracts.DTO;
 using EventStore.Services.Contractors.Interfaces;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventStore.Api.Controllers
 {
+    [EnableCors]
     [Route("api/event")]
     [ApiController]
     public class EventController : Controller

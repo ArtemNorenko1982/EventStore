@@ -19,8 +19,4 @@
     <ProjectReference Include="..\EventStore.DataContracts\EventStore.DataContracts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DbMapping\" />
-  </ItemGroup>
-
 </Project>
