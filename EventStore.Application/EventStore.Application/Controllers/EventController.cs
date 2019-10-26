@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventStore.Api.Controllers
 {
-    [EnableCors]
+    [EnableCors("AllowOrigin")]
     [Route("api/event")]
     [ApiController]
     public class EventController : Controller
