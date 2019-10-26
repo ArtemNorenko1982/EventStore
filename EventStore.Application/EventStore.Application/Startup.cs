@@ -1,0 +1,55 @@
+﻿using EventStore.DataAccess.EF;
+using EventStore.Api.ContainerSettinigs.Registrations;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+namespace EventStore.Application
+{
+    public class Startup
+    {
+        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton(parameter => Configuration);
+            Container.RegisterModules(services);
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IUrlHelper, UrlHelper>(factory =>
+            {
+                var actContext = factory.GetService<IActionContextAccessor>().ActionContext;
+                return new UrlHelper(actContext);
+            });
+
+            services.AddMvc().AddMvcOptions(
+                //extends output format in case consumer will use xml output format
+                options =>
+                    options.OutputFormatters
+                        .Add(new XmlDataContractSerializerOutputFormatter()));
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, EventStoreContext eventStoreContext)
+        {
+            loggerFactory.AddConsole(LogLevel.Error);
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseStatusCodePages();
+            app.UseMvc();
+        }
+    }
+}
