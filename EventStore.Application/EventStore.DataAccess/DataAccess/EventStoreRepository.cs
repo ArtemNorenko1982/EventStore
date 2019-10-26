@@ -25,9 +25,10 @@ namespace EventStore.DataAccess.DataAccess
             _mapper = mapper;
         }
 
-        public async Task<TModel> AddAsync(TEntity entity)
+        public async Task<TModel> AddAsync(TModel model)
         {
             var result = 0;
+            var entity = _mapper.Map<TEntity>(model);
             var queryResult = new List<TEntity> { entity };
 
             using (_context)
@@ -39,9 +40,10 @@ namespace EventStore.DataAccess.DataAccess
             return result > 0 ? _mapper.Map<TModel>(queryResult.FirstOrDefault()) : null;
         }
 
-        public async Task<bool> AddAsync(IEnumerable<TEntity> entities)
+        public async Task<bool> AddAsync(IEnumerable<TModel> models)
         {
             var result = 0;
+            var entities = _mapper.Map<IEnumerable<TEntity>>(models);
             using (_context)
             {
                 await _context.Set<TEntity>().AddRangeAsync(entities);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BookService.WebApi.Helpers;
 using EventStore.Data;
 using EventStore.DataContracts;
@@ -16,9 +17,18 @@ namespace EventStore.Services.Services
         }
 
 
-        public SingleOperationResult<PersonModel> Add(PersonModel newItem)
+        public SingleOperationResult<PersonModel> Add(PersonModel model)
         {
-            return null;
+            try
+            {
+                var result = Repository.AddAsync(model).Result;
+
+                return SingleSuccess(OperationTypes.Add, result);
+            }
+            catch (Exception e)
+            {
+                return SingleError(OperationTypes.Add, ServerMessages.CannotPerformOperation);
+            }
         }
 
         public CollectionOperationResult<PersonModel> AddRange(IEnumerable<PersonModel> items)

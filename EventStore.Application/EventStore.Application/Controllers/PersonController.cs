@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventStore.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/person")]
     [ApiController]
     public class PersonController : Controller
     {
@@ -19,18 +19,18 @@ namespace EventStore.Api.Controllers
             _urlHelper = uriHelper;
         }
 
-        [HttpGet(Name = "GetEvents")]
+        [HttpGet(Name = "GetPersons")]
         public IActionResult GetPersons(SourceParameters parameters)
         {
             var result = _personService.GetRecords(parameters);
             if (!result.WasSuccessful) return NotFound();
 
-            var response = new ApiResponse<PersonModel>(_urlHelper, "GetEvents", result.Records, parameters);
+            var response = new ApiResponse<PersonModel>(_urlHelper, "GetPersons", result.Records, parameters);
             return Ok(response);
         }
 
         [HttpPost]
-        public IActionResult AddBook(PersonModel model)
+        public IActionResult AddPerson(PersonModel model)
         {
             var result = _personService.Add(model);
             if (result.WasSuccessful)

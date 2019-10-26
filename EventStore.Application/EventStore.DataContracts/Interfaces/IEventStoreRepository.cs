@@ -15,11 +15,11 @@ namespace EventStore.DataContracts
         /// <summary>
         /// Add single entity
         /// </summary>
-        /// <param name="entity"><see cref="IBaseEntity"/></param>
+        /// <param name="model"></param>
         /// <returns>Entity</returns>
-        Task<TModel> AddAsync(TEntity entity);
+        Task<TModel> AddAsync(TModel model);
 
-        Task<bool> AddAsync(IEnumerable<TEntity> entities);
+        Task<bool> AddAsync(IEnumerable<TModel> models);
 
         Task<IEnumerable<TModel>> GetAsync(Expression<Func<TEntity, bool>> predicate = null,
             Func<IQueryable<TEntity>, IQueryable<TEntity>> includeFunction = null, bool asNoTracking = false);
