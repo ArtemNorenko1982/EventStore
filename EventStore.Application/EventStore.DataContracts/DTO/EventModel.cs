@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using EventStore.DataContracts.Interfaces;
+
+namespace EventStore.DataContracts.DTO
+{
+    public class EventModel : IBaseModel
+    {
+        public int Id { get; set; }
+        public int PersonId { get; set; }
+        public string Producer { get; set; }
+        public string Source { get; set; }
+        public string ActionType { get; set; }
+        public string Content { get; set; }
+        public DateTime EventDate { get; set; }
+        public Dictionary<object, object> Meta { get; set; }
+    }
+}
