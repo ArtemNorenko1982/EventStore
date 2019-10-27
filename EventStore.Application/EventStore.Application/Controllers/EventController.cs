@@ -42,20 +42,21 @@ namespace EventStore.Api.Controllers
                 Id = 1,
                 FirstName = "James",
                 LastName = "Bond",
-                CompanyName = "Spy agency",
-                CrunchId = "12",
+                TwitterId = "gfgf",
                 FacebookId = "data",
-                TwitterId = "gfgf"
-            };
+                CrunchId = "12",
+                StartFrom = DateTime.Now
+        };
 
             var per = new PersonModel
             {
+                Id = 10,
                 FirstName = "Stuart",
                 LastName = "Landesberg",
                 TwitterId = "Stu_Land",
                 FacebookId = "Stuart-Landesberg",
                 CrunchId = "stuart-landesberg",
-                //StartFrom = new DateTime{}("2019-10-20T12:00:00Z")
+                StartFrom = DateTime.Now
             };
 
             var res = _minerService.PostMessage(personModel);
