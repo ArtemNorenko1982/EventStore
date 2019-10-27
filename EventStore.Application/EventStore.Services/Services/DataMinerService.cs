@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using AutoMapper;
@@ -10,6 +11,7 @@ using EventStore.DataContracts.DTO;
 using EventStore.Services.Contractors.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Google.Protobuf;
 
 namespace EventStore.Services.Services
 {
@@ -17,8 +19,9 @@ namespace EventStore.Services.Services
     {
         private readonly IEventStoreRepository<EventModel, EventEntity> repository;
         private readonly IMapper mapper;
-        private const string PostQueue = "persons-v1";
-        private const string ReadQueue = "events-v1";
+        private const string PersonQueue = "persons-v1";
+        private const string GroupId = "evntListener";
+        private const string EventQueue = "events-v1";
         private const string BootstrapServer = "172.26.3.99:9092";
 
         private readonly ProducerConfig _producerConfig;
@@ -28,7 +31,7 @@ namespace EventStore.Services.Services
         public DataMinerService(IEventStoreRepository<EventModel, EventEntity> repository)
         {
             this.repository = repository;
-            
+
             _producerConfig = new ProducerConfig
             {
                 BootstrapServers = BootstrapServer
@@ -36,9 +39,11 @@ namespace EventStore.Services.Services
 
             _consumerConfig = new ConsumerConfig
             {
+                GroupId = GroupId,
+                EnableAutoOffsetStore = true,
                 BootstrapServers = BootstrapServer,
-                GroupId = ReadQueue,
-                EnableAutoCommit = false
+                EnableAutoCommit = true,
+                EnablePartitionEof = true
             };
         }
 
@@ -56,7 +61,7 @@ namespace EventStore.Services.Services
                 var message = new Message<Null, string> { Value = jsonModel };
                 try
                 {
-                    producer.Produce(PostQueue, message);
+                    producer.Produce(PersonQueue, message);
                     producer.Flush(TimeSpan.FromSeconds(10));
                     result = true;
                 }
@@ -72,29 +77,35 @@ namespace EventStore.Services.Services
         public bool ConsumeMessage()
         {
             var result = false;
-            using (var consumer = new ConsumerBuilder<Null, string>(_consumerConfig).Build())
+            using (var consumer = new ConsumerBuilder<Ignore, string>(_consumerConfig).Build())
             {
                 try
                 {
-                    consumer.Subscribe(ReadQueue);
+                    consumer.Subscribe(EventQueue);
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    Console.CancelKeyPress += (_, e) =>
+                    {
+                        e.Cancel = true; // prevent the process from terminating.
+                        cts.Cancel();
+                    };
                     try
                     {
-                        var r = consumer.Consume();
-                        
+                        var r = consumer.Consume(cts.Token);
+                        var val = $"{r.Value} at {r.TopicPartitionOffset}";
                         result = true;
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
-                        
+
                     }
-                    
+
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
-                
+
             }
 
             return result;

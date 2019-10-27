@@ -54,7 +54,7 @@ namespace EventStore.Application
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseStatusCodePages();
             app.UseMvc();
-
+            eventStoreContext.Database.EnsureCreated();
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
