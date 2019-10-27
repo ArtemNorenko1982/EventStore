@@ -1,6 +1,12 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using EventStore.Data.Entities;
+using EventStore.DataContracts;
+using EventStore.DataContracts.DTO;
 using EventStore.Services.Contractors.Interfaces;
+using EventStore.Services.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SystemTimer = System.Timers.Timer;
 
@@ -10,20 +16,22 @@ namespace EventStore.Api.ContainerSettinigs.HostedServices
     public class KafkaListener : IHostedService
     {
         private readonly SystemTimer timer;
-        private readonly IDataMinerService minerService;
-        public KafkaListener(IDataMinerService minerService)
+        //private readonly IDataMinerService minerService;
+        private readonly IServiceProvider services;
+        public KafkaListener(IServiceProvider services)
         {
-            timer = new SystemTimer(20000);
-            this.minerService = minerService;
+            this.services = services;
+            timer = new SystemTimer(200);
+            //StartAsync(CancellationToken.None);
         }
-        public Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken token)
         {
             timer.Elapsed += async (obj, e) => await OnTimerElapsed(obj, e);
             timer.Start();
             return Task.CompletedTask;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public Task StopAsync(CancellationToken token)
         {
             timer.Stop();
             return Task.CompletedTask;
@@ -31,14 +39,21 @@ namespace EventStore.Api.ContainerSettinigs.HostedServices
 
         private async Task OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            try
+            //var minerService = new DataMinerService(services.GetRequiredService<IEventStoreRepository<EventModel, EventEntity>>());
+            using (var scope = services.CreateScope())
             {
-                minerService.ConsumeMessage();
+                var minerService = new DataMinerService(scope.ServiceProvider.GetRequiredService<IEventStoreRepository<EventModel, EventEntity>>());
+
+                try
+                {
+                    minerService.ConsumeMessage();
+                }
+                catch (TaskCanceledException)
+                {
+                    var r = false;
+                }
             }
-            catch (TaskCanceledException)
-            {
-                
-            }
+            
 
         }
     }
