@@ -21,7 +21,7 @@ namespace EventStore.Api.Controllers
             _urlHelper = uriHelper;
             this._minerService = _minerService;
         }
-        
+
         [HttpGet("{id}")]
         public IActionResult GetEvent(int id)
         {
@@ -37,30 +37,6 @@ namespace EventStore.Api.Controllers
                 Source = "https://en.wikipedia.org/wiki/James_Bond"
             };
 
-            var personModel = new PersonModel
-            {
-                Id = 1,
-                FirstName = "James",
-                LastName = "Bond",
-                TwitterId = "gfgf",
-                FacebookId = "data",
-                CrunchId = "12",
-                StartFrom = DateTime.Now
-        };
-
-            var per = new PersonModel
-            {
-                Id = 10,
-                FirstName = "Stuart",
-                LastName = "Landesberg",
-                TwitterId = "Stu_Land",
-                FacebookId = "Stuart-Landesberg",
-                CrunchId = "stuart-landesberg",
-                StartFrom = DateTime.Now
-            };
-
-            var res = _minerService.PostMessage(personModel);
-            var res1 = _minerService.PostMessage(per);
             var mes = _minerService.ConsumeMessage();
             //var result = _eventService.GetRecords(parameters);
             //if (!result.WasSuccessful) return NotFound();

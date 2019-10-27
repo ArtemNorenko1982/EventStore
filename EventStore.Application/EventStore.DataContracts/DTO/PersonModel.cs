@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using EventStore.DataContracts.Interfaces;
 
 namespace EventStore.DataContracts.DTO
@@ -9,7 +8,7 @@ namespace EventStore.DataContracts.DTO
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string CompanyName { get; set; }
+        //public string CompanyName { get; set; }
 
         public string TwitterId { get; set; }
         public string CrunchId { get; set; }

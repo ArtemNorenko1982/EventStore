@@ -11,12 +11,14 @@ namespace EventStore.Api.Controllers
     public class PersonController : Controller
     {
         private readonly IPersonDataService _personService;
+        private readonly IDataMinerService _minerService;
         private readonly IUrlHelper _urlHelper;
 
-        public PersonController(IPersonDataService personService, IUrlHelper uriHelper)
+        public PersonController(IPersonDataService personService, IUrlHelper uriHelper, IDataMinerService minerService)
         {
             _personService = personService;
             _urlHelper = uriHelper;
+            _minerService = minerService;
         }
 
         [HttpGet(Name = "GetPersons")]
@@ -35,6 +37,7 @@ namespace EventStore.Api.Controllers
             var result = _personService.Add(model);
             if (result.WasSuccessful)
             {
+                _minerService.PostMessage(result.Record);
                 return Ok();
             }
 
