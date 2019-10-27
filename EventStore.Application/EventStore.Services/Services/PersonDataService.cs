@@ -37,7 +37,7 @@ namespace EventStore.Services.Services
             try
             {
                 var modelsList = models.ToList();
-                modelsList.ForEach(model => model.StartFrom = DateTime.Now.AddDays(-7).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"));
+                modelsList.ForEach(model => model.StartFrom = DateTime.Now.AddDays(-7).ToString("yyyy-MM-ddTHH\\:mm\\:sszzz"));
                 var result = Repository.AddAsync(modelsList).Result;
 
                 if (result.Any())
