@@ -58,8 +58,7 @@ namespace EventStore.Services.Services
                 r => Console.WriteLine($"{(!r.Error.IsError ? $"Delivered message to {r.TopicPartitionOffset}" : $"Delivery error {r.Error.Reason}")}");
 
             var jsonModel = JsonConvert.SerializeObject(model);
-            //var jsonModel = JObject.FromObject(model);
-
+            
             using (var producer = new ProducerBuilder<Null, string>(_producerConfig).Build())
             {
                 var message = new Message<Null, string> { Value = jsonModel };

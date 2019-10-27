@@ -37,7 +37,7 @@ namespace EventStore.Api.ContainerSettinigs.HostedServices
             return Task.CompletedTask;
         }
 
-        private async Task OnTimerElapsed(object sender, ElapsedEventArgs e)
+        private Task OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
             //var minerService = new DataMinerService(services.GetRequiredService<IEventStoreRepository<EventModel, EventEntity>>());
             using (var scope = services.CreateScope())
@@ -53,8 +53,7 @@ namespace EventStore.Api.ContainerSettinigs.HostedServices
                     var r = false;
                 }
             }
-            
-
+            return Task.CompletedTask;
         }
     }
 }
