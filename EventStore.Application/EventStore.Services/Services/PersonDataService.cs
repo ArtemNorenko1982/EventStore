@@ -39,7 +39,12 @@ namespace EventStore.Services.Services
                 // TODO multiple enumerations
                 var result = Repository.AddAsync(models).Result;
 
-                return CollectionSuccess(OperationTypes.Add, ToPagesList(models));
+                if (result)
+                {
+                    return CollectionSuccess(OperationTypes.Add, ToPagesList(new List<PersonModel>()));
+                }
+
+                return CollectionError(OperationTypes.Add, ServerMessages.ErrorInDataBase);
             }
             catch (Exception e)
             {
@@ -96,7 +101,7 @@ namespace EventStore.Services.Services
                          String.Equals(parameters.LastName, model.LastName, StringComparison.InvariantCultureIgnoreCase)))
                     .Result;
 
-                return CollectionSuccess(OperationTypes.Read, ToPagesList(result));
+                return CollectionSuccess(OperationTypes.Read, ToPagesList(result.ToList()));
             }
             catch (Exception e)
             {
@@ -104,10 +109,10 @@ namespace EventStore.Services.Services
             }
         }
 
-        private PagesList<PersonModel> ToPagesList(IEnumerable<PersonModel> result)
+        private PagesList<PersonModel> ToPagesList(List<PersonModel> result)
         {
             //TODO
-            return new PagesList<PersonModel>(result, Int32.MaxValue, 0, Int32.MaxValue);
+            return PagesList<PersonModel>.Init(result, 1, result.Count());
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EventStore.Api.Controllers
 {
@@ -29,9 +30,10 @@ namespace EventStore.Api.Controllers
             var result = _eventService.GetRecords(parameters);
             if (!result.WasSuccessful) return NotFound();
 
-            var response = new EventApiResponse(_urlHelper, "GetEvents", result.Records, parameters);
+            //TODO
+            //var response = new EventApiResponse(_urlHelper, "GetEvents", result.Records, parameters);
 
-            return Ok(response);
+            return Ok(result.Records.ToList());
         }
 
         [HttpGet("{id}")]

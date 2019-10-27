@@ -78,7 +78,7 @@ namespace EventStore.Services.Services
                     .Result;
 
                 var orderedModels = rawModels.OrderByDescending(model => model.EventDate).AsQueryable();
-                var pagedModels = PagesList<EventModel>.Init(orderedModels, parameters.PageNumber, parameters.PageSize);
+                var pagedModels = PagesList<EventModel>.Init(orderedModels, parameters.PageNumber, parameters.PerPage);
 
                 return CollectionSuccess(OperationTypes.Read, pagedModels);
             }
