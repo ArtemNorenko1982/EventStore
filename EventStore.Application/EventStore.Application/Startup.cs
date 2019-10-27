@@ -28,7 +28,7 @@ namespace EventStore.Application
         {
             services.AddSingleton(parameter => Configuration);
             Container.RegisterModules(services);
-            services.AddCors(cfg => cfg.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin()));
+            services.AddCors(cfg => cfg.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader()));
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IUrlHelper, UrlHelper>(factory =>
             {
