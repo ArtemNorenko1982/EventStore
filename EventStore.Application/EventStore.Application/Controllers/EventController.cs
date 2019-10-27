@@ -12,12 +12,14 @@ namespace EventStore.Api.Controllers
     public class EventController : Controller
     {
         private readonly IEventDataService _eventService;
+        private readonly IDataMinerService _minerService;
         private readonly IUrlHelper _urlHelper;
 
-        public EventController(IEventDataService eventService, IUrlHelper uriHelper)
+        public EventController(IEventDataService eventService, IUrlHelper uriHelper, IDataMinerService _minerService)
         {
             _eventService = eventService;
             _urlHelper = uriHelper;
+            this._minerService = _minerService;
         }
         
         [HttpGet("{id}")]
@@ -34,7 +36,31 @@ namespace EventStore.Api.Controllers
                 Producer = "twitter",
                 Source = "https://en.wikipedia.org/wiki/James_Bond"
             };
-            
+
+            var personModel = new PersonModel
+            {
+                Id = 1,
+                FirstName = "James",
+                LastName = "Bond",
+                CompanyName = "Spy agency",
+                CrunchId = "12",
+                FacebookId = "data",
+                TwitterId = "gfgf"
+            };
+
+            var per = new PersonModel
+            {
+                FirstName = "Stuart",
+                LastName = "Landesberg",
+                TwitterId = "Stu_Land",
+                FacebookId = "Stuart-Landesberg",
+                CrunchId = "stuart-landesberg",
+                //StartFrom = new DateTime{}("2019-10-20T12:00:00Z")
+            };
+
+            var res = _minerService.PostMessage(personModel);
+            var res1 = _minerService.PostMessage(per);
+            var mes = _minerService.ConsumeMessage();
             //var result = _eventService.GetRecords(parameters);
             //if (!result.WasSuccessful) return NotFound();
             //

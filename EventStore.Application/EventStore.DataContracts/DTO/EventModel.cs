@@ -13,6 +13,6 @@ namespace EventStore.DataContracts.DTO
         public string ActionType { get; set; }
         public string Content { get; set; }
         public DateTime EventDate { get; set; }
-        public Dictionary<object, object> Meta { get; set; }
+        public IDictionary<string, string> Meta { get; set; } = new Dictionary<string, string>();
     }
 }

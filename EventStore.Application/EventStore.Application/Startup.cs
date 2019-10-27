@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace EventStore.Application
 {
@@ -52,6 +54,11 @@ namespace EventStore.Application
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseStatusCodePages();
             app.UseMvc();
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
         }
     }
 }

@@ -15,6 +15,7 @@ namespace EventStore.Api.ContainerSettinigs.Registrations
         {
             services.AddTransient<IEventDataService, EventDataService>();
             services.AddTransient<IPersonDataService, PersonDataService>();
+            services.AddTransient<IDataMinerService, DataMinerService>();
         }
     }
 }
