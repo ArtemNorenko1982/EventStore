@@ -38,11 +38,11 @@ namespace EventStore.Services.Services
             {
                 var modelsList = models.ToList();
                 modelsList.ForEach(model => model.StartFrom = DateTime.Now.AddDays(-7).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"));
-                var result = Repository.AddAsync(modelsList).Result.ToList();
+                var result = Repository.AddAsync(modelsList).Result;
 
                 if (result.Any())
                 {
-                    return CollectionSuccess(OperationTypes.Add, ToPagesList(result));
+                    return CollectionSuccess(OperationTypes.Add, ToPagesList(result.ToList()));
                 }
 
                 return CollectionError(OperationTypes.Add, ServerMessages.ErrorInDataBase);
@@ -88,12 +88,12 @@ namespace EventStore.Services.Services
             return null;
         }
 
-        
+
         public CollectionOperationResult<PersonModel> GetRecords()
         {
             try
             {
-                var result = Repository.GetAsync().Result;
+                var result = Repository.GetAsync(i => i.Id != 0).Result;
                 //var result = Repository.GetAsync(model =>
                 //        (parameters.PersonIds.Any() || parameters.PersonIds.Contains(model.Id)) &&
                 //        (String.IsNullOrEmpty(parameters.CompanyName) ||

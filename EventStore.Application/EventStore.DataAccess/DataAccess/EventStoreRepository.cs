@@ -40,26 +40,29 @@ namespace EventStore.DataAccess.DataAccess
             return result > 0 ? _mapper.Map<TModel>(queryResult.FirstOrDefault()) : null;
         }
 
-        public async Task<List<TModel>> AddAsync(IEnumerable<TModel> models)
+        public async Task<IEnumerable<TModel>> AddAsync(IEnumerable<TModel> models)
         {
             var result = 0;
-            var modellList = new List<TModel>();
-            var entities = _mapper.Map<IEnumerable<TEntity>>(models);
+            var entities = _mapper.Map<List<TEntity>>(models);
+            var entityList = new List<int>();
             using (_context)
             {
                 foreach (var entity in entities)
                 {
-                    var el = _context.Set<TEntity>().AddAsync(entity).Result;
-                    result = _context.SaveChangesAsync().Result;
-
-                    var item = await GetSingleAsync(i => i.Id == el.Entity.Id);
-                    modellList.Add(item);
+                    var el = await _context.Set<TEntity>().AddAsync(entity);
+                    result = await _context.SaveChangesAsync();
+                    entityList.Add(el.Entity.Id);
                 }
-                //await _context.Set<TEntity>().AddRangeAsync(entities);
-                
+                await _context.Set<TEntity>().AddRangeAsync(entities);
             }
 
-            return modellList;
+            for (var j = 0; j < entityList.Count; j++)
+            {
+
+                entities[j].Id = entityList[j];
+            }
+
+            return _mapper.Map<List<TModel>>(entities);
         }
 
         public async Task<IEnumerable<TModel>> GetAsync(Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> includeFunction = null, bool asNoTracking = false)

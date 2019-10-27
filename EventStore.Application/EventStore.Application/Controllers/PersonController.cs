@@ -1,10 +1,15 @@
-﻿using EventStore.CommonContracts.SourceParameters;
+﻿using System;
+using EventStore.CommonContracts.SourceParameters;
 using EventStore.DataContracts.DTO;
 using EventStore.Services.Contractors.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using EventStore.Data;
+using EventStore.DataContracts;
+using EventStore.Services.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Api.Controllers
 {
@@ -17,15 +22,18 @@ namespace EventStore.Api.Controllers
         private readonly IDataMinerService _minerService;
         private readonly IUrlHelper _urlHelper;
         private readonly IDataMinerService _dataMinerService;
+        private readonly IServiceProvider provider;
 
         public PersonController(
             IPersonDataService personService, 
             IUrlHelper uriHelper, 
-            IDataMinerService dataMinerService)
+            IDataMinerService dataMinerService,
+            IServiceProvider provider)
         {
             _personService = personService;
             _urlHelper = uriHelper;
             _dataMinerService = dataMinerService;
+            this.provider = provider;
         }
 
         [HttpGet("GetPersons")]

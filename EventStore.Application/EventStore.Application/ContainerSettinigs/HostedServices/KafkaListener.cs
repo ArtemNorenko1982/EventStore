@@ -21,7 +21,7 @@ namespace EventStore.Api.ContainerSettinigs.HostedServices
         public KafkaListener(IServiceProvider services)
         {
             this.services = services;
-            timer = new SystemTimer(200);
+            timer = new SystemTimer(20000);
             //StartAsync(CancellationToken.None);
         }
         public Task StartAsync(CancellationToken token)
