@@ -1,14 +1,14 @@
-﻿using System;
-using BookService.WebApi.Helpers;
-using EventStore.CommonContracts.Helpers;
-using EventStore.DataContracts.Interfaces;
+﻿using EventStore.CommonContracts.Helpers;
+using EventStore.CommonContracts.SourceParameters;
+using EventStore.DataContracts.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace EventStore.Api.Helpers
 {
-    public class ApiResponse<TModel> where TModel : class, IBaseModel
+    public class EventApiResponse
     {
-        public ApiResponse(IUrlHelper uriHelper, string methodName, PagesList<TModel> models, SourceParameters parameters)
+        public EventApiResponse(IUrlHelper uriHelper, string methodName, PagesList<EventModel> models, EventSourceParameters parameters)
         {
             var uriHelper1 = uriHelper;
             PageNumber = models.CurrentPage;
@@ -17,10 +17,8 @@ namespace EventStore.Api.Helpers
             NextPage = models.HasNext
                 ? new Uri(uriHelper1.Link(methodName, new
                 {
-                    firstname = parameters.FirstName,
-                    lastname = parameters.LastName,
-                    personid = parameters.PersonId,
-                    companyname = parameters.CompanyName,
+                    keyPhrase = parameters.KeyPhrase,
+                    personids = parameters.PersonIds,
                     pageNumber = models.CurrentPage + 1,
                     pageSize = models.PageSize
                 }))
@@ -29,17 +27,15 @@ namespace EventStore.Api.Helpers
             PreviousPage = models.HasPrevious
                 ? PreviousPage = new Uri(uriHelper1.Link(methodName, new
                 {
-                    firstname = parameters.FirstName,
-                    lastname = parameters.LastName,
-                    personid = parameters.PersonId,
-                    companyname = parameters.CompanyName,
+                    keyPhrase = parameters.KeyPhrase,
+                    personids = parameters.PersonIds,
                     pageNumber = models.CurrentPage - 1,
                     pageSize = models.PageSize
                 }))
                 : null;
 
         }
-        public PagesList<TModel> Models { get; private set; }
+        public PagesList<EventModel> Models { get; private set; }
         public int PageNumber { get; private set; }
         public Uri PreviousPage { get; private set; }
         public Uri NextPage { get; private set; }

@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using BookService.WebApi.Helpers;
+﻿using EventStore.CommonContracts.Helpers;
+using EventStore.CommonContracts.SourceParameters;
 using EventStore.Data;
 using EventStore.DataContracts;
 using EventStore.DataContracts.DTO;
 using EventStore.Services.Contractors;
 using EventStore.Services.Contractors.Interfaces;
 using EventStore.Services.Contractors.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EventStore.Services.Services
 {
@@ -15,7 +17,6 @@ namespace EventStore.Services.Services
         protected PersonDataService(IEventStoreRepository<PersonModel, PersonEntity> repository) : base(repository)
         {
         }
-
 
         public SingleOperationResult<PersonModel> Add(PersonModel model)
         {
@@ -31,9 +32,19 @@ namespace EventStore.Services.Services
             }
         }
 
-        public CollectionOperationResult<PersonModel> AddRange(IEnumerable<PersonModel> items)
+        public CollectionOperationResult<PersonModel> AddRange(IEnumerable<PersonModel> models)
         {
-            return null;
+            try
+            {
+                // TODO multiple enumerations
+                var result = Repository.AddAsync(models).Result;
+
+                return CollectionSuccess(OperationTypes.Add, ToPagesList(models));
+            }
+            catch (Exception e)
+            {
+                return CollectionError(OperationTypes.Add, ServerMessages.CannotPerformOperation);
+            }
         }
 
         public SingleOperationResult<PersonModel> Update(PersonModel item)
@@ -71,9 +82,32 @@ namespace EventStore.Services.Services
             return null;
         }
 
-        public CollectionOperationResult<PersonModel> GetRecords(SourceParameters parameters)
+        public CollectionOperationResult<PersonModel> GetRecords(PersonSourceParameters parameters)
         {
-            return null;
+            try
+            {
+                var result = Repository.GetAsync(model =>
+                        (parameters.PersonIds.Any() || parameters.PersonIds.Contains(model.Id)) &&
+                        (String.IsNullOrEmpty(parameters.CompanyName) ||
+                         String.Equals(parameters.CompanyName, model.CompanyName, StringComparison.InvariantCultureIgnoreCase)) &&
+                        (String.IsNullOrEmpty(parameters.FirstName) || 
+                         String.Equals(parameters.FirstName, model.FirstName, StringComparison.InvariantCultureIgnoreCase)) &&
+                        (String.IsNullOrEmpty(parameters.LastName) || 
+                         String.Equals(parameters.LastName, model.LastName, StringComparison.InvariantCultureIgnoreCase)))
+                    .Result;
+
+                return CollectionSuccess(OperationTypes.Read, ToPagesList(result));
+            }
+            catch (Exception e)
+            {
+                return CollectionError(OperationTypes.Read, ServerMessages.CannotPerformOperation);
+            }
+        }
+
+        private PagesList<PersonModel> ToPagesList(IEnumerable<PersonModel> result)
+        {
+            //TODO
+            return new PagesList<PersonModel>(result, Int32.MaxValue, 0, Int32.MaxValue);
         }
     }
 }

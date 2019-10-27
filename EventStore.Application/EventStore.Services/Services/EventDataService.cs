@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BookService.WebApi.Helpers;
 using EventStore.CommonContracts.Helpers;
+using EventStore.CommonContracts.SourceParameters;
 using EventStore.Data.Entities;
 using EventStore.DataContracts;
 using EventStore.DataContracts.DTO;
@@ -65,16 +65,19 @@ namespace EventStore.Services.Services
             return null;
         }
 
-        public CollectionOperationResult<EventModel> GetRecords(SourceParameters parameters)
+        public CollectionOperationResult<EventModel> GetRecords(EventSourceParameters parameters)
         {
             try
             {
-                var rawModels = parameters.PersonId != 0 
-                    ? Repository.GetAsync(i => i.Id == parameters.PersonId).Result 
-                    : Repository.GetAsync().Result;
+                var rawModels = Repository
+                    .GetAsync(i =>
+                        (parameters.PersonIds.Any() || parameters.PersonIds.Contains(i.PersonId)) &&
+                        (String.IsNullOrEmpty(parameters.KeyPhrase) ||
+                         i.Content.Contains(parameters.KeyPhrase,
+                             StringComparison.InvariantCultureIgnoreCase)))
+                    .Result;
 
                 var orderedModels = rawModels.OrderByDescending(model => model.EventDate).AsQueryable();
-
                 var pagedModels = PagesList<EventModel>.Init(orderedModels, parameters.PageNumber, parameters.PageSize);
 
                 return CollectionSuccess(OperationTypes.Read, pagedModels);
