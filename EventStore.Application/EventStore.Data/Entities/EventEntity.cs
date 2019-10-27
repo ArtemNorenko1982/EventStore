@@ -13,7 +13,7 @@ namespace EventStore.Data.Entities
         public string ActionType { get; set; }
         public string Content { get; set; }
         public DateTime EventDate { get; set; }
-        public Dictionary<object, object> Meta { get; set; }
+        //public IEnumerable<string, string> Meta { get; set; } = new Dictionary<string, string>();
         public PersonEntity Person { get; set; }
     }
 }
