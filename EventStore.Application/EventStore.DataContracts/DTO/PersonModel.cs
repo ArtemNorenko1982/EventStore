@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using EventStore.DataContracts.Interfaces;
 
 namespace EventStore.DataContracts.DTO

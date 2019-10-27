@@ -39,10 +39,14 @@ namespace EventStore.Services.Services
 
             _consumerConfig = new ConsumerConfig
             {
-                GroupId = GroupId,
-                EnableAutoOffsetStore = true,
                 BootstrapServers = BootstrapServer,
+                GroupId = GroupId,
                 EnableAutoCommit = true,
+                AutoCommitIntervalMs = 2000,
+                StatisticsIntervalMs = 5000,
+                SessionTimeoutMs = 6000,
+                //AutoOffsetReset = AutoOffsetReset.Error,
+                QueuedMinMessages = 10000,
                 EnablePartitionEof = true
             };
         }
@@ -54,8 +58,7 @@ namespace EventStore.Services.Services
                 r => Console.WriteLine($"{(!r.Error.IsError ? $"Delivered message to {r.TopicPartitionOffset}" : $"Delivery error {r.Error.Reason}")}");
 
             var jsonModel = JsonConvert.SerializeObject(model);
-            //var jsonModel = JObject.FromObject(model);
-
+            
             using (var producer = new ProducerBuilder<Null, string>(_producerConfig).Build())
             {
                 var message = new Message<Null, string> { Value = jsonModel };
@@ -79,46 +82,53 @@ namespace EventStore.Services.Services
             var result = false;
             using (var consumer = new ConsumerBuilder<Ignore, string>(_consumerConfig).Build())
             {
+
+                consumer.Subscribe(EventQueue);
+                CancellationTokenSource cts = new CancellationTokenSource();
+                Console.CancelKeyPress += (_, e) =>
+                {
+                    e.Cancel = true; // prevent the process from terminating.
+                    cts.Cancel();
+                };
+
                 try
                 {
-                    consumer.Subscribe(EventQueue);
-                    CancellationTokenSource cts = new CancellationTokenSource();
-                    Console.CancelKeyPress += (_, e) =>
+                    var message = consumer.Consume(cts.Token);
+                    do
                     {
-                        e.Cancel = true; // prevent the process from terminating.
-                        cts.Cancel();
-                    };
-                    try
-                    {
-                        var r = consumer.Consume(cts.Token);
-                        var val = $"{r.Value} at {r.TopicPartitionOffset}";
-                        result = true;
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-
-                    }
+                        try
+                        {
+                            var model = JsonConvert.DeserializeObject<EventModel>(message.Value);
+                            if (model.PersonId != 0)
+                            {
+                                try
+                                {
+                                    repository.AddAsync(model);
+                                    result = true;
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    result = false;
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            
+                        }
+                        message = consumer.Consume(cts.Token);
+                    } while (!string.IsNullOrEmpty(message.Value));
 
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    result = false;
                 }
-
             }
 
             return result;
         }
-
-        #region PrivateMethods
-
-        private bool IsConnected()
-        {
-
-            return true;
-        }
-
-        #endregion
     }
 }

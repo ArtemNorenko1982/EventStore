@@ -14,6 +14,7 @@ namespace EventStore.Api.Controllers
     public class PersonController : Controller
     {
         private readonly IPersonDataService _personService;
+        private readonly IDataMinerService _minerService;
         private readonly IUrlHelper _urlHelper;
         private readonly IDataMinerService _dataMinerService;
 
