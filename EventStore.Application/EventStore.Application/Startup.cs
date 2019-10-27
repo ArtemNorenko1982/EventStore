@@ -51,7 +51,8 @@ namespace EventStore.Application
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+            app.UseCors("AllowOrigin");
+          
             app.UseStatusCodePages();
             app.UseMvc();
             eventStoreContext.Database.EnsureCreated();
