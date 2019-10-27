@@ -9,20 +9,25 @@ using System.Linq;
 namespace EventStore.Api.Controllers
 {
     [EnableCors("AllowOrigin")]
-    [Route("api/person/")]
+    [Route("api/person")]
     [ApiController]
     public class PersonController : Controller
     {
         private readonly IPersonDataService _personService;
         private readonly IUrlHelper _urlHelper;
+        private readonly IDataMinerService _dataMinerService;
 
-        public PersonController(IPersonDataService personService, IUrlHelper uriHelper)
+        public PersonController(
+            IPersonDataService personService, 
+            IUrlHelper uriHelper, 
+            IDataMinerService dataMinerService)
         {
             _personService = personService;
             _urlHelper = uriHelper;
+            _dataMinerService = dataMinerService;
         }
 
-        [HttpGet(Name = "GetPersons")]
+        [HttpGet("GetPersons")]
         public IActionResult GetPersons()
         {
             var result = _personService.GetRecords(new PersonSourceParameters());
@@ -31,12 +36,17 @@ namespace EventStore.Api.Controllers
             return Ok(result.Records.ToList());
         }
 
-        [HttpPost]
-        public IActionResult AddPersons(IEnumerable<PersonModel> models)
+        [HttpPost("AddPersons")]
+        public IActionResult AddPersons(List<PersonModel> models)
         {
             var result = _personService.AddRange(models);
             if (result.WasSuccessful)
             {
+                result.Records.ForEach(model =>
+                {
+                    _dataMinerService.PostMessage(model);
+                });
+
                 return Ok();
             }
 

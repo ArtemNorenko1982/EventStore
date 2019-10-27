@@ -36,12 +36,11 @@ namespace EventStore.Services.Services
         {
             try
             {
-                // TODO multiple enumerations
                 var result = Repository.AddAsync(models).Result;
 
                 if (result)
                 {
-                    return CollectionSuccess(OperationTypes.Add, ToPagesList(new List<PersonModel>()));
+                    return CollectionSuccess(OperationTypes.Add, ToPagesList(models.ToList()));
                 }
 
                 return CollectionError(OperationTypes.Add, ServerMessages.ErrorInDataBase);

@@ -4,6 +4,9 @@ using EventStore.Data.Entities;
 using EventStore.DataAccess.DataAccess;
 using EventStore.DataContracts;
 using EventStore.DataContracts.DTO;
+using EventStore.Services.Contractors.Interfaces;
+using EventStore.Services.Contractors.Interfaces.Core;
+using EventStore.Services.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Api.ContainerSettinigs.Registrations

@@ -57,7 +57,6 @@ namespace EventStore.Api.Controllers
                 FirstName = "James",
                 LastName = "Bond",
                 TwitterId = "gfgf",
-                FacebookId = "data",
                 CrunchId = "12",
                 StartFrom = DateTime.Now
         };
@@ -68,7 +67,6 @@ namespace EventStore.Api.Controllers
                 FirstName = "Stuart",
                 LastName = "Landesberg",
                 TwitterId = "Stu_Land",
-                FacebookId = "Stuart-Landesberg",
                 CrunchId = "stuart-landesberg",
                 StartFrom = DateTime.Now
             };
