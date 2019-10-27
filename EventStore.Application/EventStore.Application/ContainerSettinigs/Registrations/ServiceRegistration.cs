@@ -17,13 +17,6 @@ namespace EventStore.Api.ContainerSettinigs.Registrations
     {
         public void Register(IServiceCollection services)
         {
-            //services.AddTransient<IBaseModel, EventModel>();
-            //services.AddTransient<IBaseModel, PersonModel>();
-            //services.AddTransient<IBaseEntity, EventEntity>();
-            //services.AddTransient<IBaseEntity, PersonEntity>();
-
-            services.AddTransient<IDataService, DataService<IBaseModel, IBaseEntity>>();
-            services.AddTransient<IReadDataService<DataService, DataService<PersonModel, PersonEntity>>();
             services.AddTransient<IEventDataService, EventDataService>();
             services.AddTransient<IPersonDataService, PersonDataService>();
             services.AddTransient<IDataMinerService, DataMinerService>();

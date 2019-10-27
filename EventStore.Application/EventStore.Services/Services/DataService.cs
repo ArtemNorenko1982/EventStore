@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace EventStore.Services.Services
 {
     public class DataService<TModel, TEntity> : IDataService
-         where TModel : class, IBaseModel
+         where TModel : class, IBaseModel, new()
          where TEntity : class, IBaseEntity
     {
         /// <summary>

@@ -14,7 +14,7 @@ namespace EventStore.Services.Services
 {
     public class PersonDataService : DataService<PersonModel, PersonEntity>, IPersonDataService
     {
-        protected PersonDataService(IEventStoreRepository<PersonModel, PersonEntity> repository) : base(repository)
+        public PersonDataService(IEventStoreRepository<PersonModel, PersonEntity> repository) : base(repository)
         {
         }
 
@@ -86,19 +86,21 @@ namespace EventStore.Services.Services
             return null;
         }
 
-        public CollectionOperationResult<PersonModel> GetRecords(PersonSourceParameters parameters)
+        
+        public CollectionOperationResult<PersonModel> GetRecords()
         {
             try
             {
-                var result = Repository.GetAsync(model =>
-                        (parameters.PersonIds.Any() || parameters.PersonIds.Contains(model.Id)) &&
-                        (String.IsNullOrEmpty(parameters.CompanyName) ||
-                         String.Equals(parameters.CompanyName, model.CompanyName, StringComparison.InvariantCultureIgnoreCase)) &&
-                        (String.IsNullOrEmpty(parameters.FirstName) || 
-                         String.Equals(parameters.FirstName, model.FirstName, StringComparison.InvariantCultureIgnoreCase)) &&
-                        (String.IsNullOrEmpty(parameters.LastName) || 
-                         String.Equals(parameters.LastName, model.LastName, StringComparison.InvariantCultureIgnoreCase)))
-                    .Result;
+                var result = Repository.GetAsync().Result;
+                //var result = Repository.GetAsync(model =>
+                //        (parameters.PersonIds.Any() || parameters.PersonIds.Contains(model.Id)) &&
+                //        (String.IsNullOrEmpty(parameters.CompanyName) ||
+                //         String.Equals(parameters.CompanyName, model.CompanyName, StringComparison.InvariantCultureIgnoreCase)) &&
+                //        (String.IsNullOrEmpty(parameters.FirstName) || 
+                //         String.Equals(parameters.FirstName, model.FirstName, StringComparison.InvariantCultureIgnoreCase)) &&
+                //        (String.IsNullOrEmpty(parameters.LastName) || 
+                //         String.Equals(parameters.LastName, model.LastName, StringComparison.InvariantCultureIgnoreCase)))
+                //    .Result;
 
                 return CollectionSuccess(OperationTypes.Read, ToPagesList(result.ToList()));
             }

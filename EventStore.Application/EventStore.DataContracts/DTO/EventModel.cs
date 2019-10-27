@@ -6,10 +6,6 @@ namespace EventStore.DataContracts.DTO
 {
     public class EventModel : IBaseModel
     {
-        public EventModel()
-        {
-            this.Meta = new Dictionary<string, string>();
-        }
         public int Id { get; set; }
         public int PersonId { get; set; }
         public string Producer { get; set; }
@@ -17,6 +13,6 @@ namespace EventStore.DataContracts.DTO
         public string ActionType { get; set; }
         public string Content { get; set; }
         public DateTime EventDate { get; set; }
-        public IDictionary<string, string> Meta { get; set; }
+        public IDictionary<string, string> Meta { get; set; } = new Dictionary<string, string>();
     }
 }

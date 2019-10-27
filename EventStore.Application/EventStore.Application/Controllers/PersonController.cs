@@ -30,7 +30,7 @@ namespace EventStore.Api.Controllers
         [HttpGet("GetPersons")]
         public IActionResult GetPersons()
         {
-            var result = _personService.GetRecords(new PersonSourceParameters());
+            var result = _personService.GetRecords();
             if (!result.WasSuccessful) return NotFound();
 
             return Ok(result.Records.ToList());

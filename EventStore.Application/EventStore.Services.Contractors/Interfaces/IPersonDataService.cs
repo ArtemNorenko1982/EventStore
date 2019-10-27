@@ -11,6 +11,6 @@ namespace EventStore.Services.Contractors.Interfaces
         /// Get all records
         /// </summary>
         /// <returns><see cref="CollectionOperationResult{TModel}"/></returns>
-        CollectionOperationResult<PersonModel> GetRecords(PersonSourceParameters parameters);
+        CollectionOperationResult<PersonModel> GetRecords();
     }
 }
