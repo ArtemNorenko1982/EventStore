@@ -24,8 +24,8 @@ namespace EventStore.Api.Controllers
             _urlHelper = uriHelper;
         }
 
-        [HttpGet(Name = "GetEvents")]
-        public IActionResult GetEvents(EventSourceParameters parameters)
+        [HttpGet("GetEvents")]
+        public IActionResult GetEvents([FromQuery]EventSourceParameters parameters)
         {
             var result = _eventService.GetRecords(parameters);
             if (!result.WasSuccessful) return NotFound();
