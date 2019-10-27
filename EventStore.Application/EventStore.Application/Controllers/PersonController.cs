@@ -1,11 +1,14 @@
-﻿using BookService.WebApi.Helpers;
-using EventStore.Api.Helpers;
+﻿using EventStore.CommonContracts.SourceParameters;
 using EventStore.DataContracts.DTO;
 using EventStore.Services.Contractors.Interfaces;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EventStore.Api.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/person")]
     [ApiController]
     public class PersonController : Controller
@@ -13,31 +16,38 @@ namespace EventStore.Api.Controllers
         private readonly IPersonDataService _personService;
         private readonly IDataMinerService _minerService;
         private readonly IUrlHelper _urlHelper;
+        private readonly IDataMinerService _dataMinerService;
 
-        public PersonController(IPersonDataService personService, IUrlHelper uriHelper, IDataMinerService minerService)
+        public PersonController(
+            IPersonDataService personService, 
+            IUrlHelper uriHelper, 
+            IDataMinerService dataMinerService)
         {
             _personService = personService;
             _urlHelper = uriHelper;
-            _minerService = minerService;
+            _dataMinerService = dataMinerService;
         }
 
-        [HttpGet(Name = "GetPersons")]
-        public IActionResult GetPersons(SourceParameters parameters)
+        [HttpGet("GetPersons")]
+        public IActionResult GetPersons()
         {
-            var result = _personService.GetRecords(parameters);
+            var result = _personService.GetRecords();
             if (!result.WasSuccessful) return NotFound();
 
-            var response = new ApiResponse<PersonModel>(_urlHelper, "GetPersons", result.Records, parameters);
-            return Ok(response);
+            return Ok(result.Records.ToList());
         }
 
-        [HttpPost]
-        public IActionResult AddPerson(PersonModel model)
+        [HttpPost("AddPersons")]
+        public IActionResult AddPersons(List<PersonModel> models)
         {
-            var result = _personService.Add(model);
+            var result = _personService.AddRange(models);
             if (result.WasSuccessful)
             {
-                _minerService.PostMessage(result.Record);
+                result.Records.ForEach(model =>
+                {
+                    _dataMinerService.PostMessage(model);
+                });
+
                 return Ok();
             }
 

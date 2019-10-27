@@ -1,6 +1,4 @@
-﻿using BookService.WebApi.Helpers;
-using EventStore.DataContracts.Interfaces;
-using EventStore.Services.Contractors.Utils;
+﻿using EventStore.DataContracts.Interfaces;
 
 namespace EventStore.Services.Contractors.Interfaces.Core
 {
@@ -24,11 +22,5 @@ namespace EventStore.Services.Contractors.Interfaces.Core
         /// <param name="id"></param>
         /// <returns>model</returns>
         SingleOperationResult<TModel> GetSingleRecordBySource(int sourceId, int id);
-
-        /// <summary>
-        /// Get all records
-        /// </summary>
-        /// <returns><see cref="CollectionOperationResult{TModel}"/></returns>
-        CollectionOperationResult<TModel> GetRecords(SourceParameters parameters);
     }
 }
