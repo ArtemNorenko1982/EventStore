@@ -11,7 +11,7 @@ namespace EventStore.DataAccess.EF
         {
         }
 
-        public DbSet<PersonEntity> Authors { get; set; }
+        public DbSet<PersonEntity> Persons { get; set; }
         public DbSet<EventEntity> Events { get; set; }
     }
 }
