@@ -28,7 +28,7 @@ namespace EventStore.Application
         {
             services.AddSingleton(parameter => Configuration);
             Container.RegisterModules(services);
-            services.AddCors(cfg => cfg.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader()));
+            services.AddCors(cfg => cfg.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IUrlHelper, UrlHelper>(factory =>
             {
@@ -51,7 +51,7 @@ namespace EventStore.Application
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(options => options.AllowAnyOrigin());
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
             app.UseStatusCodePages();
             app.UseMvc();
             eventStoreContext.Database.EnsureCreated();
