@@ -13,7 +13,7 @@ namespace EventStore.DataContracts.DTO
         public string TwitterId { get; set; }
         public string CrunchId { get; set; }
 
-        public DateTime StartFrom { get; set; }
+        public string StartFrom { get; set; }
         //public IDictionary<string, string> UserAccounts { get; set; } = new Dictionary<string, string>();
     }
 }

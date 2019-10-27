@@ -6,7 +6,7 @@ namespace EventStore.CommonContracts.SourceParameters
     {
         public int PageNumber { get; set; } = 1;
 
-        public int PerPage = 20;
+        public int PerPage { get; set; } = 20;
 
         public string KeyPhrase { get; set; }
 

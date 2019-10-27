@@ -36,11 +36,13 @@ namespace EventStore.Services.Services
         {
             try
             {
-                var result = Repository.AddAsync(models).Result;
+                var modelsList = models.ToList();
+                modelsList.ForEach(model => model.StartFrom = DateTime.Now.AddDays(-7).ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"));
+                var result = Repository.AddAsync(modelsList).Result;
 
                 if (result)
                 {
-                    return CollectionSuccess(OperationTypes.Add, ToPagesList(models.ToList()));
+                    return CollectionSuccess(OperationTypes.Add, ToPagesList(modelsList.ToList()));
                 }
 
                 return CollectionError(OperationTypes.Add, ServerMessages.ErrorInDataBase);
