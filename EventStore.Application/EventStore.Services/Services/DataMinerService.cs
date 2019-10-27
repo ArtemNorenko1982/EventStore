@@ -51,7 +51,7 @@ namespace EventStore.Services.Services
             var jsonModel = JsonConvert.SerializeObject(model);
             //var jsonModel = JObject.FromObject(model);
 
-            using (var producer = new ProducerBuilder<Null, string>(_consumerConfig).Build())
+            using (var producer = new ProducerBuilder<Null, string>(_producerConfig).Build())
             {
                 var message = new Message<Null, string> { Value = jsonModel };
                 try
