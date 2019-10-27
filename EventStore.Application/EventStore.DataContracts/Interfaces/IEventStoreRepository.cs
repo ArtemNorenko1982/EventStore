@@ -36,5 +36,7 @@ namespace EventStore.DataContracts
         Task<bool> RemoveAsync(TEntity entity);
 
         Task<bool> RemoveAsync(IEnumerable<TEntity> entities);
+
+        void CleanContext();
     }
 }

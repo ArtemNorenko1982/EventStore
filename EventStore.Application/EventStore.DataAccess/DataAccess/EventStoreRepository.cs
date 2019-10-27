@@ -31,13 +31,18 @@ namespace EventStore.DataAccess.DataAccess
             var entity = _mapper.Map<TEntity>(model);
             var queryResult = new List<TEntity> { entity };
 
-            using (_context)
-            {
                 await _context.Set<TEntity>().AddAsync(entity);
                 result = await _context.SaveChangesAsync();
-            }
 
-            return result > 0 ? _mapper.Map<TModel>(queryResult.FirstOrDefault()) : null;
+                return result > 0 ? _mapper.Map<TModel>(queryResult.FirstOrDefault()) : null;
+        }
+
+        public void CleanContext()
+        {
+            using (_context)
+            {
+                
+            }
         }
 
         public async Task<List<TModel>> AddAsync(IEnumerable<TModel> models)

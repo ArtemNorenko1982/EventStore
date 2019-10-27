@@ -36,7 +36,6 @@ namespace EventStore.Services.Services
         {
             try
             {
-                var result = new List<PersonModel>();
                 var addedModels = Repository.AddAsync(models).Result;
                 addedModels.ForEach(model =>
                 {

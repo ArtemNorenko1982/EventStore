@@ -45,7 +45,7 @@ namespace EventStore.Api.Controllers
             {
                 result.Records.ForEach(model =>
                 {
-                //    _dataMinerService.PostMessage(model);
+                    _dataMinerService.PostMessage(model);
                 });
 
                 return Ok();
