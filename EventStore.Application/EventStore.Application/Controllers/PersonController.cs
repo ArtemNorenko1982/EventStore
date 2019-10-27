@@ -37,7 +37,7 @@ namespace EventStore.Api.Controllers
         }
 
         [HttpPost("AddPersons")]
-        public IActionResult AddPersons(List<PersonModel> models)
+        public IActionResult AddPersons([FromBody]List<PersonModel> models)
         {
             var result = _personService.AddRange(models);
             if (result.WasSuccessful)
