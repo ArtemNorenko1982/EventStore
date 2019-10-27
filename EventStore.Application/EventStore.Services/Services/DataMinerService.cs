@@ -123,7 +123,7 @@ namespace EventStore.Services.Services
                             message = consumer.Consume(cts.Token);
                         }
                        
-                    } while (!string.IsNullOrEmpty(message.Value));
+                    } while (message != null && !string.IsNullOrEmpty(message.Value));
 
                 }
                 catch (Exception e)
