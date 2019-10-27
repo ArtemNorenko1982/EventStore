@@ -20,7 +20,7 @@ namespace EventStore.Services.Services
         private readonly IEventStoreRepository<EventModel, EventEntity> repository;
         private readonly IMapper mapper;
         private const string PersonQueue = "persons-v1";
-        private const string GroupId = "evntListener";
+        private const string GroupId = "evntListener1";
         private const string EventQueue = "events-v1";
         private const string BootstrapServer = "172.26.3.99:9092";
 
@@ -96,6 +96,7 @@ namespace EventStore.Services.Services
                     var message = consumer.Consume(cts.Token);
                     do
                     {
+                        
                         try
                         {
                             var model = JsonConvert.DeserializeObject<EventModel>(message.Value);
@@ -112,12 +113,17 @@ namespace EventStore.Services.Services
                                     result = false;
                                 }
                             }
+
                         }
                         catch (Exception e)
                         {
-                            
+                            var re = false;
                         }
-                        message = consumer.Consume(cts.Token);
+                        finally
+                        {
+                            message = consumer.Consume(cts.Token);
+                        }
+                       
                     } while (!string.IsNullOrEmpty(message.Value));
 
                 }

@@ -40,17 +40,26 @@ namespace EventStore.DataAccess.DataAccess
             return result > 0 ? _mapper.Map<TModel>(queryResult.FirstOrDefault()) : null;
         }
 
-        public async Task<bool> AddAsync(IEnumerable<TModel> models)
+        public async Task<List<TModel>> AddAsync(IEnumerable<TModel> models)
         {
             var result = 0;
+            var modellList = new List<TModel>();
             var entities = _mapper.Map<IEnumerable<TEntity>>(models);
             using (_context)
             {
-                await _context.Set<TEntity>().AddRangeAsync(entities);
-                result = await _context.SaveChangesAsync();
+                foreach (var entity in entities)
+                {
+                    var el = _context.Set<TEntity>().AddAsync(entity).Result;
+                    result = _context.SaveChangesAsync().Result;
+
+                    var item = await GetSingleAsync(i => i.Id == el.Entity.Id);
+                    modellList.Add(item);
+                }
+                //await _context.Set<TEntity>().AddRangeAsync(entities);
+                
             }
 
-            return result > 0;
+            return modellList;
         }
 
         public async Task<IEnumerable<TModel>> GetAsync(Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> includeFunction = null, bool asNoTracking = false)

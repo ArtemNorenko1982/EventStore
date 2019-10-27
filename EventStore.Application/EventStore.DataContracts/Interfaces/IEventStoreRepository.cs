@@ -19,7 +19,7 @@ namespace EventStore.DataContracts
         /// <returns>Entity</returns>
         Task<TModel> AddAsync(TModel model);
 
-        Task<bool> AddAsync(IEnumerable<TModel> models);
+        Task<List<TModel>> AddAsync(IEnumerable<TModel> models);
 
         Task<IEnumerable<TModel>> GetAsync(Expression<Func<TEntity, bool>> predicate = null,
             Func<IQueryable<TEntity>, IQueryable<TEntity>> includeFunction = null, bool asNoTracking = false);
