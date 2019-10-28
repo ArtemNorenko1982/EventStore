@@ -1,15 +1,9 @@
-﻿using System;
-using EventStore.CommonContracts.SourceParameters;
-using EventStore.DataContracts.DTO;
+﻿using EventStore.DataContracts.DTO;
 using EventStore.Services.Contractors.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using EventStore.Data;
-using EventStore.DataContracts;
-using EventStore.Services.Services;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.Api.Controllers
 {
@@ -19,21 +13,17 @@ namespace EventStore.Api.Controllers
     public class PersonController : Controller
     {
         private readonly IPersonDataService _personService;
-        private readonly IDataMinerService _minerService;
         private readonly IUrlHelper _urlHelper;
         private readonly IDataMinerService _dataMinerService;
-        private readonly IServiceProvider provider;
-
+        
         public PersonController(
             IPersonDataService personService, 
             IUrlHelper uriHelper, 
-            IDataMinerService dataMinerService,
-            IServiceProvider provider)
+            IDataMinerService dataMinerService)
         {
             _personService = personService;
             _urlHelper = uriHelper;
             _dataMinerService = dataMinerService;
-            this.provider = provider;
         }
 
         [HttpGet("GetPersons")]
@@ -49,17 +39,13 @@ namespace EventStore.Api.Controllers
         public IActionResult AddPersons([FromBody]List<PersonModel> models)
         {
             var result = _personService.AddRange(models);
-            if (result.WasSuccessful)
+            if (!result.WasSuccessful) return NotFound();
+            result.Records.ForEach(model =>
             {
-                result.Records.ForEach(model =>
-                {
-                    _dataMinerService.PostMessage(model);
-                });
-
-                return Ok();
-            }
-
-            return NotFound();
+                _dataMinerService.PostMessage(model);
+            });
+               
+            return Ok();
         }
     }
 }

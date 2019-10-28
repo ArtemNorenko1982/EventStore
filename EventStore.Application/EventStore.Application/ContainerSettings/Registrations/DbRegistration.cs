@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EventStore.Api.ContainerSettinigs.Registrations
+namespace EventStore.Api.ContainerSettings.Registrations
 {
     public class DbRegistration : IRegistrationModule
     {

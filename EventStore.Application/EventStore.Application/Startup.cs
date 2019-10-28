@@ -1,7 +1,6 @@
 ﻿using EventStore.DataAccess.EF;
-using EventStore.Api.ContainerSettinigs.Registrations;
+using EventStore.Api.ContainerSettings.Registrations;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -28,7 +27,11 @@ namespace EventStore.Application
         {
             services.AddSingleton(parameter => Configuration);
             Container.RegisterModules(services);
-            services.AddCors(cfg => cfg.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
+            services.AddCors(cfg => 
+                cfg.AddPolicy("AllowOrigin", 
+                    options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IUrlHelper, UrlHelper>(factory =>
             {

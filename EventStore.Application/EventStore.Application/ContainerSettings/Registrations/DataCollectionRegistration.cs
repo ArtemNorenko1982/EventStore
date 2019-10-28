@@ -6,7 +6,7 @@ using EventStore.DataContracts;
 using EventStore.DataContracts.DTO;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EventStore.Api.ContainerSettinigs.Registrations
+namespace EventStore.Api.ContainerSettings.Registrations
 {
     public class DataCollectionRegistration : IRegistrationModule
     {

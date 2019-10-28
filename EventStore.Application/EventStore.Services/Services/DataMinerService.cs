@@ -1,33 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using AutoMapper;
 using Confluent.Kafka;
 using EventStore.Data.Entities;
 using EventStore.DataContracts;
 using EventStore.DataContracts.DTO;
 using EventStore.Services.Contractors.Interfaces;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Google.Protobuf;
 
 namespace EventStore.Services.Services
 {
     public class DataMinerService : IDataMinerService
     {
         private readonly IEventStoreRepository<EventModel, EventEntity> repository;
-        private readonly IMapper mapper;
         private const string PersonQueue = "persons-v1";
-        private const string GroupId = "evntListener1";
+        private const string GroupId = "evntListener";
         private const string EventQueue = "events-v1";
         private const string BootstrapServer = "172.26.3.99:9092";
 
         private readonly ProducerConfig _producerConfig;
         private readonly ConsumerConfig _consumerConfig;
-        //private readonly Dictionary<string, string> _consumerConfig;
-
+        
         public DataMinerService(IEventStoreRepository<EventModel, EventEntity> repository)
         {
             this.repository = repository;
@@ -45,7 +37,6 @@ namespace EventStore.Services.Services
                 AutoCommitIntervalMs = 2000,
                 StatisticsIntervalMs = 5000,
                 SessionTimeoutMs = 6000,
-                //AutoOffsetReset = AutoOffsetReset.Error,
                 QueuedMinMessages = 10000,
                 EnablePartitionEof = true
             };
@@ -82,7 +73,6 @@ namespace EventStore.Services.Services
             var result = false;
             using (var consumer = new ConsumerBuilder<Ignore, string>(_consumerConfig).Build())
             {
-
                 consumer.Subscribe(EventQueue);
                 CancellationTokenSource cts = new CancellationTokenSource();
                 Console.CancelKeyPress += (_, e) =>
@@ -96,35 +86,31 @@ namespace EventStore.Services.Services
                     var message = consumer.Consume(cts.Token);
                     do
                     {
-                        
                         try
                         {
                             var model = JsonConvert.DeserializeObject<EventModel>(message.Value);
-                            if (model.PersonId != 0)
+                            if (model.PersonId == 0) continue;
+                            try
                             {
-                                try
-                                {
-                                    repository.AddAsync(model);
-                                    result = true;
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                    result = false;
-                                }
+                                repository.AddAsync(model).Wait(cts.Token);
+                                result = true;
                             }
-
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                                result = false;
+                            }
                         }
                         catch (Exception e)
                         {
-                            var re = false;
+                            // ignored
                         }
                         finally
                         {
                             message = consumer.Consume(cts.Token);
                         }
                        
-                    } while (!string.IsNullOrEmpty(message.Value));
+                    } while (message!= null && !string.IsNullOrEmpty(message.Value));
 
                 }
                 catch (Exception e)

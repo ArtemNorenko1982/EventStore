@@ -1,5 +1,4 @@
 ﻿using EventStore.CommonContracts.Helpers;
-using EventStore.CommonContracts.SourceParameters;
 using EventStore.Data;
 using EventStore.DataContracts;
 using EventStore.DataContracts.DTO;
@@ -36,16 +35,12 @@ namespace EventStore.Services.Services
         {
             try
             {
-                var modelsList = models.ToList();
-                modelsList.ForEach(model => model.StartFrom = DateTime.Now.AddDays(-7).ToString("yyyy-MM-ddTHH\\:mm\\:sszzz"));
-                var result = Repository.AddAsync(modelsList).Result;
+                var result = Repository.AddAsync(models).Result.ToList();
 
-                if (result.Any())
-                {
-                    return CollectionSuccess(OperationTypes.Add, ToPagesList(result.ToList()));
-                }
+                if (!result.Any()) return CollectionError(OperationTypes.Add, ServerMessages.ErrorInDataBase);
+                result.ForEach(model => model.StartFrom = DateTime.Now.AddDays(-7).ToString("yyyy-MM-ddTHH\\:mm\\:sszzz"));
+                return CollectionSuccess(OperationTypes.Add, ToPagesList(result));
 
-                return CollectionError(OperationTypes.Add, ServerMessages.ErrorInDataBase);
             }
             catch (Exception e)
             {

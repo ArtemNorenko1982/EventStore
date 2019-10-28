@@ -1,10 +1,8 @@
-﻿using System;
-using EventStore.Api.ContainerSettinigs.HostedServices;
+﻿using EventStore.Api.ContainerSettings.HostedServices;
 using EventStore.CommonContracts;
-using EventStore.Services.Contractors.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EventStore.Api.ContainerSettinigs.Registrations
+namespace EventStore.Api.ContainerSettings.Registrations
 {
     public class HostedServicesRegistration : IRegistrationModule
     {

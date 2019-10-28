@@ -6,7 +6,7 @@ using EventStore.CommonContracts;
 using EventStore.Services.AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EventStore.Api.ContainerSettinigs.Registrations
+namespace EventStore.Api.ContainerSettings.Registrations
 {
     /// <summary>
     /// Add auto mapper config

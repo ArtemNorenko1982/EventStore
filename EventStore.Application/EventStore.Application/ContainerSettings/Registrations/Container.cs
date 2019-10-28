@@ -4,7 +4,7 @@ using System.Linq;
 using EventStore.CommonContracts;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EventStore.Api.ContainerSettinigs.Registrations
+namespace EventStore.Api.ContainerSettings.Registrations
 {
     public static class Container
     {
